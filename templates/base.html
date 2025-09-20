@@ -9,10 +9,10 @@
     <h1>Pizza Website</h1>
     <header>
         <div class="topnav">
-            <a class="active" href="{{ url_for('home') }}">Home</a>
-            <a href="{{ url_for('order') }}">Order Now</a>
-            <a href="{{ url_for('contact') }}">Contact</a>
-            <a href="{{ url_for('about') }}">About Us</a>
+            <a href="{{ url_for('home') }}" class="{% if active_page == 'home' %}active{% endif %}">Home</a>
+            <a href="{{ url_for('order') }}" class="{% if active_page == 'order' %}active{% endif %}">Order Now</a>
+            <a href="{{ url_for('contact') }}" class="{% if active_page == 'contact' %}active{% endif %}">Contact</a>
+            <a href="{{ url_for('about') }}" class="{% if active_page == 'about' %}active{% endif %}">About Us</a>
         </div>
     </header>
 
