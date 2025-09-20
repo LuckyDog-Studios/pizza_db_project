@@ -1,0 +1,126 @@
+/* General page styling */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #fff8f0; /* warm light background */
+    color: #333;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+/* Headings */
+h1, h2, h3 {
+    color: #b22222; /* pizza red */
+    text-align: center;
+    margin-bottom: 0.5em;
+}
+
+/* Container */
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* Buttons */
+button, .btn {
+    background: #ff4500; /* warm orange-red */
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    margin: 5px 0;
+}
+
+button:hover, .btn:hover {
+    background: #e03e00; /* darker shade on hover */
+    transform: scale(1.05);
+}
+
+/* Inputs */
+input, select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin: 8px 0;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+/* Card style for pizza items */
+.card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin: 15px 0;
+    text-align: center;
+}
+
+.card img {
+    max-width: 100%;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.card h3 {
+    margin: 10px 0;
+    font-size: 1.4rem;
+    color: #333;
+}
+
+/* Order summary / highlight */
+.summary {
+    background: #ffe4b5;
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 20px;
+    font-weight: bold;
+}
+/* Top Navigation Bar */
+.topnav {
+    background-color: #b22222;   /* pizza red */
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Navigation links */
+.topnav a {
+    float: left;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 20px;
+    text-decoration: none;
+    font-size: 17px;
+    transition: all 0.3s ease;
+}
+
+/* Hover effect */
+.topnav a:hover {
+    background-color: #ff6347;   /* tomato */
+    color: white;
+    transform: scale(1.05);
+}
+
+/* Active/current link */
+.topnav a.active {
+    background-color: #ff4500;   /* orange-red */
+    color: white;
+    font-weight: bold;
+}
+
+/* Responsive for smaller screens */
+@media screen and (max-width: 600px) {
+    .topnav a {
+        float: none;
+        display: block;
+        text-align: left;
+    }
+}
