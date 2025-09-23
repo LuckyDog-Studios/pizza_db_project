@@ -3,7 +3,47 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div>
     <h1>Order Now</h1>
-    <p>Order Below</p>
+    <div class="tab-buttons">
+        <button class="tab-link active" data-tab="tab1">Tab 1</button>
+        <button class="tab-link" data-tab="tab2">Tab 2</button>
+    </div>
+
+    <div id="tab1" class="tab-content active">
+        <h2>Content for Tab 1</h2>
+        <p>This is the first tab’s content.</p>
+    </div>
+
+    <div id="tab2" class="tab-content">
+        <h2>Content for Tab 2</h2>
+        <p>This is the second tab’s content.</p>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tabButtons = document.querySelectorAll('.tab-link');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const targetTab = button.getAttribute('data-tab');
+
+            // Remove active class from all buttons
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+
+            // Add active class to clicked button
+            button.classList.add('active');
+
+            // Hide all tab contents
+            tabContents.forEach(content => content.classList.remove('active'));
+
+            // Show the selected tab content
+            document.getElementById(targetTab).classList.add('active');
+        });
+    });
+});
+</script>
 {% endblock %}
 </html>
