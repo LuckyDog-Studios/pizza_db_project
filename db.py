@@ -3,6 +3,8 @@ from sqlalchemy import create_engine, Column, Integer, String, Float, Boolean, F
 from sqlalchemy.orm import relationship, sessionmaker, declarative_base
 from datetime import datetime
 
+import secrets
+
 Base = declarative_base()
 
 # ----------------------
@@ -82,7 +84,7 @@ class DiscountCode(Base):
 # ----------------------
 # Database Setup
 # ----------------------
-DATABASE_URL = "mysql+pymysql://pizza_user:Noahjanssen9@localhost/pizza_db"  # <- change credentials
+DATABASE_URL = f"mysql+mysqlconnector://{secrets.username}:{secrets.password}@{secrets.db_ip}/pizza_db"  # <- change credentials
 engine = create_engine(DATABASE_URL, echo=True)
 
 # Create all tables
