@@ -6,16 +6,75 @@
 <div>
     <h1>Order Now</h1>
     <div class="tab-buttons">
-        <button class="tab-link active" data-tab="tab1">Tab 1</button>
-        <button class="tab-link" data-tab="tab2">Tab 2</button>
+        <button class="tab-link active" data-tab="tab1">Pizza</button>
+        <button class="tab-link" data-tab="tab2">Dessert</button>
+        <button class="tab-link" data-tab="tab2">Drinks</button>
     </div>
 
     <div id="tab1" class="tab-content active">
-        <h2>Content for Tab 1</h2>
-        <p>This is the first tab’s content.</p>
+        <div class="sections">
+            <div>
+                <h2>Meat</h2>
+                <label><input type="checkbox" name="pepperoni">Pepperoni
+                <span class="price">€1.50</span></label>
+                <label><input type="checkbox" name="salami">Salami
+                <span class="price">€1.50</span></label>
+                <label><input type="checkbox" name="ham">Ham
+                <span class="price">€1.50</span></label>
+                <label><input type="checkbox" name="chicken">Chicken
+                <span class="price">€1.80</span></label>
+                <label><input type="checkbox" name="beef">Beef
+                <span class="price">€1.80</span></label>
+            </div>
+            <div>
+                <h2>Toppings</h2>
+                <label><input type="checkbox" name="black_olive">Black Olive
+                <span class="price">€1.00</span></label>
+                <label><input type="checkbox" name="mushrooms">Mushrooms
+                <span class="price">€1.00</span></label>
+                <label><input type="checkbox" name="onions">Onions
+                <span class="price">€0.80</span></label>
+                <label><input type="checkbox" name="green_peppers">Green Peppers
+                <span class="price">€1.00</span></label>
+                <label><input type="checkbox" name="pineapple">Pineapple
+                <span class="price">€0.80</span></label>
+                <label><input type="checkbox" name="basil">Basil
+                <span class="price">€1.00</span></label>
+                <label><input type="checkbox" name="corn">Corn
+                <span class="price">€0.80</span></label>
+            </div>
+            <div>
+                <h2>Cheeses + Base</h2>
+                <label><input type="checkbox" name="mozzarella">Mozzarella
+                <span class="price">IBP</span></label>
+                <label><input type="checkbox" name="parmesan">Parmesan
+                <span class="price">€1.50</span></label>
+                <label><input type="checkbox" name="tomato_sauce">Tomato Sauce
+                <span class="price">IBP</span></label>
+                <label><input type="checkbox" name="bbq_sauce">BBQ Sauce
+                <span class="price">IBP</span></label>
+            </div>
+            <div class="order-box">
+                <div class="order-box">
+                    <h2>Your Order</h2>
+                    <ul id="order-list">
+                        <!-- Items will be added here dynamically -->
+                    </ul>
+                    <p id="order-total">Total: €0.00</p>
+                </div>
+            </div>
+        </div>
+
+
+        <button>Confirm Order</button>
     </div>
 
     <div id="tab2" class="tab-content">
+        <h2>Content for Tab 2</h2>
+        <p>This is the second tab’s content.</p>
+    </div>
+
+    <div id="tab3" class="tab-content">
         <h2>Content for Tab 2</h2>
         <p>This is the second tab’s content.</p>
     </div>

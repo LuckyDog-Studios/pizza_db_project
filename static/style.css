@@ -134,7 +134,7 @@ input, select {
 /* Tab content */
 .tab-content {
     display: none; /* hidden by default */
-    padding: 20px;
+    padding: 30px;
     border: 2px solid #ff6347;
     border-top: none;
     border-radius: 0 0 10px 10px;
@@ -144,6 +144,46 @@ input, select {
 
 .tab-content.active {
     display: block;
+}
+
+
+/* container for the two sections */
+.sections {
+  display: flex;           /* side-by-side columns */
+  gap: 5rem;
+  align-items: flex-start; /* top-align the two columns */
+}
+
+/* each column is a vertical list */
+.sections > div {
+  display: flex;
+  flex-direction: column;
+}
+
+/* tidy the headings so they don't add weird offsets */
+.sections > div h2 {
+  margin: 0 0 0.5rem 0;
+}
+
+/* each label becomes a 2-column grid: checkbox | text */
+.sections label {
+  display: grid;
+  grid-template-columns: auto 1fr auto; /* checkbox | text | price */
+  column-gap: 1rem;
+  align-items: center;
+  white-space: nowrap;
+}
+
+/* normalize checkbox placement */
+.sections label input[type="checkbox"] {
+  margin: 0;             /* remove browser margin */
+  justify-self: start;   /* keep it left in the first grid cell */
+  align-self: center;
+}
+
+.sections label .price {
+  white-space: nowrap;
+  font-weight: bold;
 }
 
 /* Smooth fade-in animation */
@@ -165,3 +205,39 @@ input, select {
 
 
 
+.order-box {
+    background: #ffe4b5; /* soft highlight */
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 20px;
+    max-width: 500px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    flex: 1;
+    min-width: 250px; /* optional, prevents it from shrinking too much */
+}
+
+.order-box h2 {
+    text-align: center;
+    margin-bottom: 10px;
+    color: #b22222;
+}
+
+.order-box ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.order-box li {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    border-bottom: 1px dotted #ccc;
+}
+
+#order-total {
+    font-weight: bold;
+    margin-top: 10px;
+    text-align: right;
+}
