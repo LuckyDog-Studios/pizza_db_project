@@ -7,8 +7,8 @@
     <h1>Order Now</h1>
     <div class="tab-buttons">
         <button class="tab-link active" data-tab="tab1">Pizza</button>
-        <button class="tab-link" data-tab="tab2">Dessert</button>
         <button class="tab-link" data-tab="tab2">Drinks</button>
+        <button class="tab-link" data-tab="tab3">Dessert</button>
     </div>
 
     <div id="tab1" class="tab-content active">
@@ -54,30 +54,54 @@
                 <label><input type="checkbox" name="bbq_sauce">BBQ Sauce
                 <span class="price">IBP</span></label>
             </div>
-            <div class="order-box">
-                <div class="order-box">
-                    <h2>Your Order</h2>
-                    <ul id="order-list">
-                        <!-- Items will be added here dynamically -->
-                    </ul>
-                    <p id="order-total">Total: €0.00</p>
-                </div>
-            </div>
         </div>
-
-
-        <button>Confirm Order</button>
     </div>
 
     <div id="tab2" class="tab-content">
-        <h2>Content for Tab 2</h2>
-        <p>This is the second tab’s content.</p>
+        <div class="sections">
+            <div>
+                <h2>Drinks</h2>
+                <label><input type="checkbox" name="coca_cola">Coca Cola
+                <span class="price">€2.50</span></label>
+                <label><input type="checkbox" name="fanta">Fanta
+                <span class="price">€2.50</span></label>
+                <label><input type="checkbox" name="iced_tea">Iced Tea
+                <span class="price">€2.50</span></label>
+                <label><input type="checkbox" name="sprite">Sprite
+                <span class="price">€2.50</span></label>
+
+            </div>
+        </div>
     </div>
 
     <div id="tab3" class="tab-content">
-        <h2>Content for Tab 2</h2>
-        <p>This is the second tab’s content.</p>
+        <div class="sections">
+            <div>
+                <h2>Dessert</h2>
+                <label><input type="checkbox" name="chocolate_cake">Chocolate Cake
+                <span class="price">€5.50</span></label>
+                <label><input type="checkbox" name="tiramisu">Tiramisu
+                <span class="price">€5.80</span></label>
+                <label><input type="checkbox" name="creme_brulee">Creme Brulee
+                <span class="price">€6.00</span></label>
+                <label><input type="checkbox" name="vanilla_ice_cream">Vanilla Ice Cream
+                <span class="price">€4.50</span></label>
+            </div>
+        </div>
     </div>
+
+    <div class="order-box">
+        <h2>Your Order</h2>
+        <ul id="order-list">
+            <!-- Items will be added here dynamically -->
+        </ul>
+        <p id="order-total">Total: €0.00</p>
+        <div class="button-container">
+            <button>Confirm Order</button>
+        </div>
+    </div>
+
+
 </div>
 
 <script>
