@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Pizza Ordering System</title>
+    <title>Bamsies Pizza</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Pizza Website</h1>
+    <h1>Bamsies Pizza</h1>
     <header>
         <div class="topnav">
-            <a href="{{ url_for('home') }}" class="{% if active_page == 'home' %}active{% endif %}">Home</a>
-            <a href="{{ url_for('order') }}" class="{% if active_page == 'order' %}active{% endif %}">Order Now</a>
-            <a href="{{ url_for('contact') }}" class="{% if active_page == 'contact' %}active{% endif %}">Contact</a>
-            <a href="{{ url_for('about') }}" class="{% if active_page == 'about' %}active{% endif %}">About Us</a>
+            <a href="{{ url_for('home.home') }}" class="{% if active_page == 'home' %}active{% endif %}">Home</a>
+            <a href="{{ url_for('order.order') }}" class="{% if active_page == 'order' %}active{% endif %}">Order Now</a>
+            <a href="{{ url_for('contact.contact') }}" class="{% if active_page == 'contact' %}active{% endif %}">Contact</a>
+            <a href="{{ url_for('about.about') }}" class="{% if active_page == 'about' %}active{% endif %}">About Us</a>
         </div>
     </header>
 

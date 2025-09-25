@@ -174,12 +174,60 @@ input, select {
   white-space: nowrap;
 }
 
-/* normalize checkbox placement */
 .sections label input[type="checkbox"] {
-  margin: 0;             /* remove browser margin */
-  justify-self: start;   /* keep it left in the first grid cell */
-  align-self: center;
+    appearance: none;       /* remove default checkbox */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 20px;            /* size of custom checkbox */
+    height: 20px;
+    border: 2px solid #ff4500; /* match button color */
+    border-radius: 6px;     /* rounded corners */
+    background-color: #fff8f0; /* match page background */
+    cursor: pointer;
+    position: relative;
+    margin: 0;
+    justify-self: start;
+    align-self: center;
+    transition: all 0.2s ease;
 }
+
+/* checkmark when checked */
+.sections label input[type="checkbox"]:checked {
+    background-color: #ff4500; /* filled with button color */
+    border-color: #ff4500;
+}
+
+/* add checkmark */
+.sections label input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 1px;
+    width: 5px;
+    height: 10px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.sections label input[type="button"] {
+    background: #ff4500;       /* matches your current buttons */
+    color: white;
+    padding: 2px 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.sections label input[type="button"]:hover {
+    background: #e03e00;       /* darker on hover */
+    transform: scale(1.05);    /* same subtle hover effect */
+}
+
 
 .sections label .price {
   white-space: nowrap;
