@@ -1,9 +1,8 @@
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, timezone
 
 db = SQLAlchemy()
 
-# ------------------- Customer -------------------
 class Customer(db.Model):
     __tablename__ = "customer"
 
@@ -25,7 +24,6 @@ class Customer(db.Model):
         return f"<Customer {self.CustomerId} {self.FirstName} {self.LastName}>"
 
 
-# ------------------- DeliveryPerson -------------------
 class DeliveryPerson(db.Model):
     __tablename__ = "delivery_person"
 
@@ -43,14 +41,14 @@ class DeliveryPerson(db.Model):
         return f"<DeliveryPerson {self.DeliveryPersonId}>"
 
 
-# ------------------- Dessert -------------------
 class Dessert(db.Model):
     __tablename__ = "dessert"
 
     DessertId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     Name = db.Column(db.String(100), nullable=False)
     Price = db.Column(db.Numeric(10, 2), nullable=False)
-    CreateDate = db.Column(db.DateTime, default=datetime.utcnow)
+    CreateDate = db.Column(db.DateTime, default=datetime.now(timezone.utc)
+)
 
     orders = db.relationship("OrderDessert", back_populates="dessert", cascade="all, delete-orphan")
 
@@ -58,7 +56,6 @@ class Dessert(db.Model):
         return f"<Dessert {self.DessertId} {self.Name}>"
 
 
-# ------------------- DiscountCode -------------------
 class DiscountCode(db.Model):
     __tablename__ = "discount_code"
 
@@ -73,14 +70,13 @@ class DiscountCode(db.Model):
         return f"<DiscountCode {self.Code} redeemed={self.IsRedeemed}>"
 
 
-# ------------------- Drink -------------------
 class Drink(db.Model):
     __tablename__ = "drink"
 
     DrinkId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     Name = db.Column(db.String(100), nullable=False)
     Price = db.Column(db.Numeric(10, 2), nullable=False)
-    CreateDate = db.Column(db.DateTime, default=datetime.utcnow)
+    CreateDate = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
     orders = db.relationship("OrderDrink", back_populates="drink", cascade="all, delete-orphan")
 
@@ -88,7 +84,6 @@ class Drink(db.Model):
         return f"<Drink {self.Name} €{self.Price}>"
 
 
-# ------------------- Ingredient -------------------
 class Ingredient(db.Model):
     __tablename__ = "ingredient"
 
@@ -97,7 +92,8 @@ class Ingredient(db.Model):
     Price = db.Column(db.Numeric(10, 2), nullable=False)
     IsVegetarian = db.Column(db.Boolean, default=False)
     IsVegan = db.Column(db.Boolean, default=False)
-    CreateDate = db.Column(db.DateTime, default=datetime.utcnow)
+    CreateDate = db.Column(db.DateTime, default=datetime.now(timezone.utc)
+)
 
     pizzas = db.relationship("PizzaIngredient", back_populates="ingredient", cascade="all, delete-orphan")
 
@@ -105,7 +101,6 @@ class Ingredient(db.Model):
         return f"<Ingredient {self.Name} €{self.Price}>"
 
 
-# ------------------- OrderDessert (junction) -------------------
 class OrderDessert(db.Model):
     __tablename__ = "order_dessert"
 
@@ -120,7 +115,6 @@ class OrderDessert(db.Model):
         return f"<OrderDessert order={self.OrderId} dessert={self.DessertId} amount={self.Amount}>"
 
 
-# ------------------- OrderDrink (junction) -------------------
 class OrderDrink(db.Model):
     __tablename__ = "order_drink"
 
@@ -135,13 +129,13 @@ class OrderDrink(db.Model):
         return f"<OrderDrink order={self.OrderId} drink={self.DrinkId} amount={self.Amount}>"
 
 
-# ------------------- Order -------------------
 class Order(db.Model):
     __tablename__ = "orders"
 
     OrderId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     CustomerId = db.Column(db.Integer, db.ForeignKey("customer.CustomerId"), nullable=False)
-    PlaceDateTime = db.Column(db.DateTime, default=datetime.utcnow)
+    PlaceDateTime = db.Column(db.DateTime, default=datetime.now(timezone.utc)
+)
     DeliveryDateTime = db.Column(db.DateTime)
     OrderStatus = db.Column(db.String(50))
     DiscountCodeId = db.Column(db.Integer, db.ForeignKey("discount_code.DiscountCodeId"))
@@ -159,7 +153,6 @@ class Order(db.Model):
         return f"<Order {self.OrderId} Customer={self.CustomerId} Status={self.OrderStatus}>"
 
 
-# ------------------- Pizza -------------------
 class Pizza(db.Model):
     __tablename__ = "pizza"
 
@@ -175,7 +168,6 @@ class Pizza(db.Model):
         return f"<Pizza {self.PizzaId} Order={self.OrderId} Amount={self.Amount} Finished={self.Finished}>"
 
 
-# ------------------- PizzaIngredient (junction) -------------------
 class PizzaIngredient(db.Model):
     __tablename__ = "pizza_ingredient"
 
@@ -189,7 +181,6 @@ class PizzaIngredient(db.Model):
         return f"<PizzaIngredient Pizza={self.PizzaId} Ingredient={self.IngredientId}>"
 
 
-# ------------------- PostalAssignment -------------------
 class PostalAssignment(db.Model):
     __tablename__ = "postal_assignments"
 
