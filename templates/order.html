@@ -99,37 +99,17 @@
             <!-- Items will be added here dynamically -->
         </ul>
         <p id="order-total">Total: €0.00</p>
-        <div class="button-container">
-            <button>Confirm Order</button>
-        </div>
+        <form method="POST" action="{{ url_for('order.new_order') }}" id="order-form">
+            <input type="hidden" name="order_data" id="order_data">
+            <button type="submit">Confirm Order</button>
+        </form>
+
     </div>
 
 
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const tabButtons = document.querySelectorAll('.tab-link');
-    const tabContents = document.querySelectorAll('.tab-content');
+<script src="{{ url_for('static', filename='js/order_tab_switch.js') }}"></script>
 
-    tabButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const targetTab = button.getAttribute('data-tab');
-
-            // Remove active class from all buttons
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-
-            // Add active class to clicked button
-            button.classList.add('active');
-
-            // Hide all tab contents
-            tabContents.forEach(content => content.classList.remove('active'));
-
-            // Show the selected tab content
-            document.getElementById(targetTab).classList.add('active');
-        });
-    });
-});
-</script>
 {% endblock %}
 </html>

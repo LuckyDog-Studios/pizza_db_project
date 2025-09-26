@@ -10,6 +10,11 @@ about_bp = Blueprint('about', __name__)
 def order():
     return render_template('order.html', active_page='order')
 
+@order_bp.route('/order', methods=['POST'])
+def new_order():
+    return
+
+
 #Home page logic
 @home_bp.route('/home')
 def home():
