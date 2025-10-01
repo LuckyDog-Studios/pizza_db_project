@@ -12,7 +12,7 @@
     </div>
 
     <div id="tab1" class="tab-content active">
-        <div class="sections">
+        <form class="sections" method="POST" action="{{ url_for('order.add_to_order') }}" id="add-order-form">
             <div>
                 <h2>Meat</h2>
                 <label><input type="checkbox" name="pepperoni">Pepperoni
@@ -37,16 +37,16 @@
                 <label><input type="checkbox" name="green_peppers">Green Peppers
                 <span class="price">€1.00</span></label>
                 <label><input type="checkbox" name="pineapple">Pineapple
-                <span class="price">€0.80</span></label>
-                <label><input type="checkbox" name="basil">Basil
                 <span class="price">€1.00</span></label>
+                <label><input type="checkbox" name="basil">Basil
+                <span class="price">€0.80</span></label>
                 <label><input type="checkbox" name="corn">Corn
                 <span class="price">€0.80</span></label>
             </div>
             <div>
                 <h2>Cheeses + Base</h2>
                 <label><input type="checkbox" name="mozzarella">Mozzarella
-                <span class="price">IBP</span></label>
+                <span class="price">€1.50</span></label>
                 <label><input type="checkbox" name="parmesan">Parmesan
                 <span class="price">€1.50</span></label>
                 <label><input type="checkbox" name="tomato_sauce">Tomato Sauce
@@ -55,9 +55,9 @@
                 <span class="price">IBP</span></label>
             </div>
             <div>
-                <button>Add to Order</button>
+                <button type="submit">Add To Order</button>
             </div>
-        </div>
+        </form>
     </div>
 
     <div id="tab2" class="tab-content">
@@ -93,20 +93,19 @@
         </div>
     </div>
 
-    <div class="order-box">
+    <form class="order-box" method="POST" action="{{ url_for('order.confirm_order') }}" id="confirm-order-form">
         <h2>Your Order</h2>
         <ul id="order-list">
             <!-- Items will be added here dynamically -->
+            {% for item in order %}
+                <li>{{ item }}
+                    <button class="remove">X</button>
+                </li>
+            {% endfor %}
         </ul>
-        <p id="order-total">Total: €0.00</p>
-        <form method="POST" action="{{ url_for('order.new_order') }}" id="order-form">
-            <input type="hidden" name="order_data" id="order_data">
+        <p id="order-total">Total: €{{ total_price }}</p>
             <button type="submit">Confirm Order</button>
-        </form>
-
-    </div>
-
-
+    </form>
 </div>
 
 <script src="{{ url_for('static', filename='js/order_tab_switch.js') }}"></script>

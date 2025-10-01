@@ -167,4 +167,4 @@ Base.metadata.create_all(engine)
 SessionLocal = sessionmaker(bind=engine)
 session = SessionLocal()
 
-print("✅ Database and tables created successfully!")
+print("Database and tables created successfully!")

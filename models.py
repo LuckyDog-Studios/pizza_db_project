@@ -47,8 +47,7 @@ class Dessert(db.Model):
     DessertId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     Name = db.Column(db.String(100), nullable=False)
     Price = db.Column(db.Numeric(10, 2), nullable=False)
-    CreateDate = db.Column(db.DateTime, default=datetime.now(timezone.utc)
-)
+    CreateDate = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
     orders = db.relationship("OrderDessert", back_populates="dessert", cascade="all, delete-orphan")
 
@@ -92,8 +91,7 @@ class Ingredient(db.Model):
     Price = db.Column(db.Numeric(10, 2), nullable=False)
     IsVegetarian = db.Column(db.Boolean, default=False)
     IsVegan = db.Column(db.Boolean, default=False)
-    CreateDate = db.Column(db.DateTime, default=datetime.now(timezone.utc)
-)
+    CreateDate = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
     pizzas = db.relationship("PizzaIngredient", back_populates="ingredient", cascade="all, delete-orphan")
 
@@ -134,8 +132,7 @@ class Order(db.Model):
 
     OrderId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     CustomerId = db.Column(db.Integer, db.ForeignKey("customer.CustomerId"), nullable=False)
-    PlaceDateTime = db.Column(db.DateTime, default=datetime.now(timezone.utc)
-)
+    PlaceDateTime = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     DeliveryDateTime = db.Column(db.DateTime)
     OrderStatus = db.Column(db.String(50))
     DiscountCodeId = db.Column(db.Integer, db.ForeignKey("discount_code.DiscountCodeId"))
