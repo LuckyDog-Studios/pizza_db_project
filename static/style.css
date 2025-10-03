@@ -305,3 +305,68 @@ input, select {
     cursor: pointer;
     transition: all 0.3s ease;
 }
+
+/* Account page wrapper */
+.account-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+/* Card for the form */
+.account-box {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    padding: 30px;
+    animation: fadeIn 0.4s ease;
+}
+
+/* Form groups */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: #b22222;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+}
+
+/* Button tweaks */
+.btn.secondary {
+    background: #555;
+}
+.btn.secondary:hover {
+    background: #333;
+}
+
+.topnav {
+    background-color: #b22222;   /* pizza red */
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    display: flex;               /* enable flexbox */
+    align-items: center;
+    justify-content: space-between; /* push items apart */
+    padding-right: 10px;
+}
+
+/* Links on the left */
+.topnav a {
+    float: none; /* reset old float */
+}
+
+/* Container for logout button on the right */
+.logout-container {
+    margin-left: auto; /* pushes it all the way right */
+}

@@ -16,8 +16,10 @@
 
             {% if session.get("customer_id") %}
                 <!--  Show when logged in -->
-                <a href="{{ url_for('auth.account') }}"><button>Account</button></a>
-                <a href="{{ url_for('auth.logout') }}"><button>Logout</button></a>
+                <a href="{{ url_for('auth.account') }}" class="{% if active_page == 'account' %}active{% endif %}">Account</a>
+                <div class="logout-container">
+                     <a href="{{ url_for('auth.logout') }}"><button>Logout</button></a>
+                </div>
             {% else %}
 
                 <!-- Show when logged out -->
