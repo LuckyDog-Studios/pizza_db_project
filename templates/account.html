@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Account</title>
+</head>
+<body>
+    <h2>My Account</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flashes local">
+          {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+        <label for="birthdate">Birth Date</label>
+        <input type="date" id="birthdate" name="birthdate" value="{{ customer.BirthDate or '' }}">
+
+        <label for="phone">Phone Number</label>
+        <input type="text" id="phone" name="phone" value="{{ customer.PhoneNumber or '' }}">
+
+        <label for="street">Street</label>
+        <input type="text" id="street" name="street" value="{{ customer.Street or '' }}">
+
+        <label for="house_number">House Number</label>
+        <input type="number" id="house_number" name="house_number" value="{{ customer.HouseNumber or '' }}">
+
+        <label for="city">City</label>
+        <input type="text" id="city" name="city" value="{{ customer.City or '' }}">
+
+        <label for="postal_code">Postal Code</label>
+        <input type="text" id="postal_code" name="postal_code" value="{{ customer.PostalCode or '' }}">
+
+        <button type="submit">Save Changes</button>
+    </form>
+
+    <!-- Back button -->
+    <a href="{{ url_for('home.home') }}">
+        <button type="button">Back to Home</button>
+    </a>
+</body>
+</html>

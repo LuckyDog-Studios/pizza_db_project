@@ -9,6 +9,7 @@ class Customer(db.Model):
     CustomerId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     FirstName = db.Column(db.String(100), nullable=False)
     LastName = db.Column(db.String(100), nullable=False)
+    PasswordHash = db.Column(db.String(200), nullable=False)
     BirthDate = db.Column(db.Date)
     PhoneNumber = db.Column(db.String(50))
     Email = db.Column(db.String(120), unique=True)
@@ -62,6 +63,8 @@ class DiscountCode(db.Model):
     Code = db.Column(db.String(50), unique=True, nullable=False)
     IsRedeemed = db.Column(db.Boolean, default=False)
     ExpiryDate = db.Column(db.Date)
+    DiscountAmount = db.Column(db.Numeric(10, 2), nullable=False, default=0.00)  # flat discount in euros
+    DiscountPercent = db.Column(db.Integer, default=0)  # e.g. 10 for 10%
 
     orders = db.relationship("Order", back_populates="discount_code")
 

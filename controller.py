@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, session
+from flask import Blueprint, render_template, redirect, url_for, request, session, flash
 
 from models import Ingredient, db, PizzaIngredient, Pizza, Order, Customer
 
@@ -10,8 +10,14 @@ about_bp = Blueprint('about', __name__)
 #Orders page logic
 @order_bp.route('/order', methods=['GET'])
 def order():
-    # TEMPORARILY GETS A CUSTOM CUSTOMER I MADE AND MANUALLY ADDED
-    customer = Customer.query.filter_by(FirstName="Noah").first()
+    #  Use logged-in customer
+    customer_id = session.get("customer_id")
+
+    if not customer_id:
+        flash("Please log in to view your orders.", "error")
+        return redirect(url_for("auth.login"))
+
+    customer = Customer.query.get(customer_id)
 
     # Get the customer's pending order
     order_obj = Order.query.filter_by(CustomerId=customer.CustomerId, OrderStatus="Pending").first()
@@ -42,8 +48,22 @@ def order():
     )
 @order_bp.route('/order/confirm', methods=['POST'])
 def confirm_order():
-    print("✅ Confirm Order triggered")
+    customer_id = session.get("customer_id")
+    if not customer_id:
+        flash("Please log in to confirm your order.", "error")
+        return redirect(url_for("auth.login"))
+
+    order = Order.query.filter_by(CustomerId=customer_id, OrderStatus="Pending").first()
+    if not order:
+        flash("No pending order to confirm.", "error")
+        return redirect(url_for("order.order"))
+
+    order.OrderStatus = "Confirmed"
+    db.session.commit()
+
+    flash("Your order has been confirmed!", "success")
     return redirect(url_for("order.order"))
+
 
 @order_bp.route('/order/add', methods=['POST'])
 def add_to_order():
@@ -51,10 +71,16 @@ def add_to_order():
     selected_ingredient_names = list(data.keys())
 
     if not selected_ingredient_names:
+        flash("No ingredients selected.", "error")
         return redirect(url_for("order.order"))
 
-    # TEMPORARILY GETS A CUSTOM CUSTOMER I MADE AND MANUALLY ADDED
-    customer = Customer.query.filter_by(FirstName="Noah").first()
+    #Use logged-in customer
+    customer_id = session.get("customer_id")
+    if not customer_id:
+        flash("Please log in before adding to your order.", "error")
+        return redirect(url_for("auth.login"))
+
+    customer = Customer.query.get(customer_id)
 
     # Create a new order (or fetch an existing "pending" order)
     order = Order.query.filter_by(CustomerId=customer.CustomerId, OrderStatus="Pending").first()
@@ -75,6 +101,7 @@ def add_to_order():
             db.session.add(PizzaIngredient(PizzaId=pizza.PizzaId, IngredientId=ingredient.IngredientId))
     db.session.commit()
 
+    flash("Pizza added to your order!", "success")
     return redirect(url_for("order.order"))
 
 

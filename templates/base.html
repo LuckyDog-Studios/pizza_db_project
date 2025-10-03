@@ -13,11 +13,37 @@
             <a href="{{ url_for('order.order') }}" class="{% if active_page == 'order' %}active{% endif %}">Order Now</a>
             <a href="{{ url_for('contact.contact') }}" class="{% if active_page == 'contact' %}active{% endif %}">Contact</a>
             <a href="{{ url_for('about.about') }}" class="{% if active_page == 'about' %}active{% endif %}">About Us</a>
+
+            {% if session.get("customer_id") %}
+                <!--  Show when logged in -->
+                <a href="{{ url_for('auth.account') }}"><button>Account</button></a>
+                <a href="{{ url_for('auth.logout') }}"><button>Logout</button></a>
+            {% else %}
+
+                <!-- Show when logged out -->
+                <a href="{{ url_for('auth.register') }}"><button>Register</button></a>
+                <a href="{{ url_for('auth.login') }}"><button>Login</button></a>
+            {% endif %}
+
         </div>
     </header>
+
+           {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flashes global">
+          {% for category, message in messages %}
+            {% if category == "success" %}
+              <li class="{{ category }}">{{ message }}</li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
 
     <div class="container">
         {% block content %}{% endblock %}
     </div>
+
 </body>
 </html>

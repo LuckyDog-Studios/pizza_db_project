@@ -157,7 +157,7 @@ class PostalAssignment(Base):
 # DB CONNECTION + CREATE
 # ===========================
 
-DATABASE_URL = f"mysql+mysqlconnector://{secrets.username}:{secrets.password}@{secrets.db_ip}/pizza_db"  # change credentials
+DATABASE_URL = f"mysql+mysqlconnector://{secrets.username}:{app_secrets.password}@{secrets.db_ip}/pizza_db"  # change credentials
 engine = create_engine(DATABASE_URL, echo=True)
 
 # Create all tables
