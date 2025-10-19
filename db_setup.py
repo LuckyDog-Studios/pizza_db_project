@@ -5,7 +5,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship, sessionmaker, declarative_base
 from datetime import datetime
-import secrets  # <-- create secrets.py with username, password, db_ip
+import app_secrets  # <-- create app_secrets.py with username, password, db_ip
 
 Base = declarative_base()
 
@@ -157,7 +157,7 @@ class PostalAssignment(Base):
 # DB CONNECTION + CREATE
 # ===========================
 
-DATABASE_URL = f"mysql+mysqlconnector://{secrets.username}:{app_secrets.password}@{secrets.db_ip}/pizza_db"  # change credentials
+DATABASE_URL = f"mysql+mysqlconnector://{app_secrets.username}:{app_secrets.password}@{secrets.db_ip}/pizza_db"  # change credentials
 engine = create_engine(DATABASE_URL, echo=True)
 
 # Create all tables

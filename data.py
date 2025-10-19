@@ -29,7 +29,7 @@ ingredients = [
 drinks = [
     Drink(Name="Coca Cola", Price=2.50, CreateDate=datetime.now(timezone.utc)),
     Drink(Name="Fanta", Price=2.50, CreateDate=datetime.now(timezone.utc)),
-    Drink(Name="Ice Tea", Price=2.50, CreateDate=datetime.now(timezone.utc)),
+    Drink(Name="Iced Tea", Price=2.50, CreateDate=datetime.now(timezone.utc)),
     Drink(Name="Sprite", Price=2.50, CreateDate=datetime.now(timezone.utc)),
 ]
 
