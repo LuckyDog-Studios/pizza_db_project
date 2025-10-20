@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="checkout-container">
+    <h1>My Orders</h1>
+
+    {% if orders %}
+        <div class="order-list" style="display: flex; flex-direction: column; gap: 1rem;">
+            {% for order in orders|reverse %}
+                <div class="checkout-box" style="
+                    width: 70%;
+                    margin: auto;
+                    padding: 1.2rem 1.5rem;
+                    border-radius: 15px;
+                    background-color: #fff8f0;
+                    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+                    border-left: 6px solid
+                        {% if order.OrderStatus == 'Confirmed' %}#ffa726{% else %}#66bb6a{% endif %};
+                    transition: transform 0.2s;
+                "
+                onmouseover="this.style.transform='scale(1.02)'"
+                onmouseout="this.style.transform='scale(1)'">
+                    <h2 style="color: #c0392b;">Order #{{ loop.revindex }}</h2>
+                    <p><strong>Date:</strong>
+                        {% if order.PlaceDateTime %}
+                            {{ (order.PlaceDateTime + timedelta(hours=2)).strftime('%Y-%m-%d %H:%M') }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </p>
+
+                    <p><strong>Status:</strong>
+                        <span style="
+                            color: {% if order.OrderStatus == 'Confirmed' %}#e67e22{% else %}#2ecc71{% endif %};
+                            font-weight: bold;
+                        ">
+                            {{ order.OrderStatus }}
+                        </span>
+                    </p>
+
+                    <ul style="margin-left: 1.2rem;">
+                        {% for pizza in order.pizzas %}
+                            <li>🍕 Custom Pizza: {{ pizza.ingredients | map(attribute='ingredient.Name') | join(', ') }}</li>
+                        {% endfor %}
+
+                        {% for drink in order.drinks %}
+                            <li>🥤 {{ drink.drink.Name }} ×{{ drink.Amount }}</li>
+                        {% endfor %}
+
+                        {% for dessert in order.desserts %}
+                            <li>🍰 {{ dessert.dessert.Name }} ×{{ dessert.Amount }}</li>
+                        {% endfor %}
+                    </ul>
+
+                    <p><strong>Total:</strong> €{{ "%.2f"|format(order.total_price) }}</p>
+
+                    {% if order.OrderStatus == 'Confirmed' %}
+                        <div style="margin-top: 10px; display: flex; gap: 10px;">
+                            <form action="{{ url_for('order.pay') }}" method="get">
+                                <input type="hidden" name="order_id" value="{{ order.OrderId }}">
+                                <button type="submit" class="btn pay-btn">Pay Now 💳</button>
+                            </form>
+                            <form action="{{ url_for('order.delete_order') }}" method="post"
+                                  onsubmit="return confirm('Are you sure you want to delete this order?');">
+                                <input type="hidden" name="order_id" value="{{ order.OrderId }}">
+                                <button type="submit" class="btn delete-btn">Delete 🗑️</button>
+                            </form>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>You haven’t placed any orders yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

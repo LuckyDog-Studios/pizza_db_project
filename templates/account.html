@@ -13,6 +13,12 @@
       {% endif %}
     {% endwith %}
 
+    <div class="account-info">
+        <p><strong>First Name:</strong> {{ customer.FirstName }}</p>
+        <p><strong>Last Name:</strong> {{ customer.LastName }}</p>
+        <p><strong>Email:</strong> {{ customer.Email }}</p>
+    </div>
+
     <form method="POST">
         <label for="birthdate">Birth Date</label>
         <input type="date" id="birthdate" name="birthdate" value="{{ customer.BirthDate or '' }}">

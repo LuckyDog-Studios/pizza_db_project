@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="checkout-container">
+
+    <h1>Finalize Your Order</h1>
+
+    <form method="POST" action="{{ url_for('order.checkout') }}">
+        <div class="checkout-grid">
+            <!-- LEFT -->
+            <div class="checkout-left">
+                <div class="checkout-box">
+                    <h2>Delivery Information</h2>
+
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name"
+                           value="{{ customer.FirstName }} {{ customer.LastName }}" readonly>
+
+                    <label for="street">Street</label>
+                    <input type="text" id="street" name="street" value="{{ customer.Street or '' }}">
+
+                    <label for="house_number">House Number</label>
+                    <input type="text" id="house_number" name="house_number" value="{{ customer.HouseNumber or '' }}">
+
+                    <label for="city">City</label>
+                    <input type="text" id="city" name="city" value="{{ customer.City or '' }}">
+
+                    <label for="postal_code">Postal Code</label>
+                    <input type="text" id="postal_code" name="postal_code" value="{{ customer.PostalCode or '' }}">
+
+                    <label for="phone">Phone</label>
+                    <input type="text" id="phone" name="phone" value="{{ customer.PhoneNumber or '' }}">
+                </div>
+
+            </div>
+
+            <!-- RIGHT -->
+            <div class="checkout-right">
+                <div class="checkout-box">
+                    <h2>Your Order</h2>
+                    <ul>
+                        {% for item in order %}
+                            <li>{{ item }}</li>
+                        {% endfor %}
+                    </ul>
+                    <p class="total"><strong>Total:</strong> €{{ total_price }}</p>
+
+                     {% if order and order.discount_code %}
+                        <p class="discount">Discount applied: {{ order.discount_code.DiscountPercent }}%</p>
+                     {% endif %}
+                </div>
+                    <div class="checkout-box">
+                        <h2>Coupon</h2>
+                        <label for="coupon">Enter Coupon Code</label>
+
+                        <div class="coupon-row">
+                            <input type="text" id="coupon" name="coupon" placeholder="e.g. BAMSIES10"
+                                   value="{{ coupon_code or '' }}">
+                            <button type="submit" name="action" value="apply_coupon" class="btn secondary">Apply</button>
+
+                            {% if order_obj.DiscountCodeId %}
+                                <button type="submit" name="action" value="remove_coupon" class="btn danger">Remove</button>
+                            {% endif %}
+                        </div>
+
+                        {% if discount_message %}
+                            <p class="coupon-message success">{{ discount_message }}</p>
+                        {% elif error_message %}
+                            <p class="coupon-message error">{{ error_message }}</p>
+                        {% endif %}
+                    </div>
+
+                <button type="submit" name="action" value="confirm_order" class="btn place-order">
+                    Complete Payment
+                </button>
+                <a href="{{ url_for('order.order') }}" class="btn secondary">⬅ Back to Edit</a>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

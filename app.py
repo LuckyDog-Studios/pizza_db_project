@@ -22,21 +22,31 @@ app.register_blueprint(contact_bp)
 app.register_blueprint(auth_bp)
 
 
+# with app.app_context():
+#     # Clear dependent tables first
+#     db.session.query(PizzaIngredient).delete()
+#     db.session.query(Pizza).delete()
+#     db.session.query(OrderDrink).delete()
+#     db.session.query(OrderDessert).delete()
+#     db.session.query(Order).delete()
+#
+#     # Then your base tables
+#     db.session.query(Ingredient).delete()
+#     db.session.query(Drink).delete()
+#     db.session.query(Dessert).delete()
+#
+#     # Re-seed base data
+#     db.session.add_all(ingredients + drinks + desserts)
+#     db.session.commit()
+#
+#     app.run()
 with app.app_context():
-    # Clear dependent tables first
-    db.session.query(PizzaIngredient).delete()
-    db.session.query(Pizza).delete()
-    db.session.query(OrderDrink).delete()
-    db.session.query(OrderDessert).delete()
-    db.session.query(Order).delete()
+    # Only seed if there are no ingredients yet
+    if not Ingredient.query.first():
+        print("Seeding base data...")
+        db.session.add_all(ingredients + drinks + desserts)
+        db.session.commit()
+    else:
+        print("Database already contains data, skipping seeding.")
 
-    # Then your base tables
-    db.session.query(Ingredient).delete()
-    db.session.query(Drink).delete()
-    db.session.query(Dessert).delete()
-
-    # Re-seed base data
-    db.session.add_all(ingredients + drinks + desserts)
-    db.session.commit()
-
-    app.run()
+app.run()

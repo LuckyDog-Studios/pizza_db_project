@@ -5,149 +5,156 @@
 {% block content %}
 <div>
     <h1>Order Now</h1>
+
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Tabs -->
     <div class="tab-buttons">
         <button class="tab-link active" data-tab="tab1">Pizza</button>
         <button class="tab-link" data-tab="tab2">Drinks</button>
         <button class="tab-link" data-tab="tab3">Dessert</button>
     </div>
 
+    <!-- PIZZA TAB -->
     <div id="tab1" class="tab-content active">
-        <form class="sections" method="POST" action="{{ url_for('order.add_to_order') }}" id="add-order-form">
+        <form class="sections" method="POST" action="{{ url_for('order.add_to_order') }}">
             <input type="hidden" name="form_id" value="add-order-form">
+
             <div>
                 <h2>Meat</h2>
-                <label><input type="checkbox" name="pepperoni">Pepperoni
-                <span class="price">€1.50</span></label>
-                <label><input type="checkbox" name="salami">Salami
-                <span class="price">€1.50</span></label>
-                <label><input type="checkbox" name="ham">Ham
-                <span class="price">€1.50</span></label>
-                <label><input type="checkbox" name="chicken">Chicken
-                <span class="price">€1.80</span></label>
-                <label><input type="checkbox" name="beef">Beef
-                <span class="price">€1.80</span></label>
+                <label><input type="checkbox" name="pepperoni"> Pepperoni (€1.50)</label>
+                <label><input type="checkbox" name="salami"> Salami (€1.50)</label>
+                <label><input type="checkbox" name="ham"> Ham (€1.50)</label>
+                <label><input type="checkbox" name="chicken"> Chicken (€1.80)</label>
+                <label><input type="checkbox" name="beef"> Beef (€1.80)</label>
             </div>
+
             <div>
                 <h2>Toppings</h2>
-                <label><input type="checkbox" name="black_olive">Black Olive
-                <span class="price">€1.00</span></label>
-                <label><input type="checkbox" name="mushrooms">Mushrooms
-                <span class="price">€1.00</span></label>
-                <label><input type="checkbox" name="onions">Onions
-                <span class="price">€0.80</span></label>
-                <label><input type="checkbox" name="green_peppers">Green Peppers
-                <span class="price">€1.00</span></label>
-                <label><input type="checkbox" name="pineapple">Pineapple
-                <span class="price">€1.00</span></label>
-                <label><input type="checkbox" name="basil">Basil
-                <span class="price">€0.80</span></label>
-                <label><input type="checkbox" name="corn">Corn
-                <span class="price">€0.80</span></label>
+                <label><input type="checkbox" name="black_olive"> Black Olive (€1.00)</label>
+                <label><input type="checkbox" name="mushrooms"> Mushrooms (€1.00)</label>
+                <label><input type="checkbox" name="onions"> Onions (€0.80)</label>
+                <label><input type="checkbox" name="green_peppers"> Green Peppers (€1.00)</label>
+                <label><input type="checkbox" name="pineapple"> Pineapple (€1.00)</label>
+                <label><input type="checkbox" name="basil"> Basil (€0.80)</label>
+                <label><input type="checkbox" name="corn"> Corn (€0.80)</label>
             </div>
+
             <div>
                 <h2>Cheeses + Base</h2>
-                <label><input type="checkbox" name="mozzarella">Mozzarella
-                <span class="price">€1.50</span></label>
-                <label><input type="checkbox" name="parmesan">Parmesan
-                <span class="price">€1.50</span></label>
-                <label><input type="checkbox" name="tomato_sauce">Tomato Sauce
-                <span class="price">IBP</span></label>
-                <label><input type="checkbox" name="bbq_sauce">BBQ Sauce
-                <span class="price">IBP</span></label>
+                <label><input type="checkbox" name="mozzarella"> Mozzarella (€1.50)</label>
+                <label><input type="checkbox" name="parmesan"> Parmesan (€1.50)</label>
+                <label><input type="checkbox" name="tomato_sauce"> Tomato Sauce (Included)</label>
+                <label><input type="checkbox" name="bbq_sauce"> BBQ Sauce (Included)</label>
             </div>
+
             <div>
-                <button type="submit">Add To Order</button>
+                <button type="submit" class="add-btn">Add Pizza To Order</button>
             </div>
         </form>
     </div>
 
+    <!-- DRINK TAB -->
     <div id="tab2" class="tab-content">
-        <form class="sections" method="POST" action="{{ url_for('order.add_to_order') }}" id="drink-add-order-form">
+        <form class="sections" method="POST" action="{{ url_for('order.add_to_order') }}">
             <input type="hidden" name="form_id" value="drink-add-order-form">
-
             <div>
                 <h2>Drinks</h2>
-                <label>
-                    <button type="submit" name="drink" value="Coca Cola">Coca Cola <span class="price">€2.50</span></button>
-                </label>
-                <label>
-                    <button type="submit" name="drink" value="Fanta">Fanta <span class="price">€2.50</span></button>
-                </label>
-                <label>
-                    <button type="submit" name="drink" value="Iced Tea">Iced Tea <span class="price">€2.50</span></button>
-                </label>
-                <label>
-                    <button type="submit" name="drink" value="Sprite">Sprite <span class="price">€2.50</span></button>
-                </label>
+                <button type="submit" name="drink" value="Coca Cola">Coca Cola (€2.50)</button>
+                <button type="submit" name="drink" value="Fanta">Fanta (€2.50)</button>
+                <button type="submit" name="drink" value="Iced Tea">Iced Tea (€2.50)</button>
+                <button type="submit" name="drink" value="Sprite">Sprite (€2.50)</button>
             </div>
         </form>
-
     </div>
 
+    <!-- DESSERT TAB -->
     <div id="tab3" class="tab-content">
-        <form class="sections" method="POST" action="{{ url_for('order.add_to_order') }}" id="dessert-add-order-form">
+        <form class="sections" method="POST" action="{{ url_for('order.add_to_order') }}">
+            <input type="hidden" name="form_id" value="dessert-add-order-form">
             <div>
                 <h2>Dessert</h2>
-                <button type="submit" name="dessert" value="Chocolate Cake">Chocolate Cake
-                    <span class="price">€5.50</span>
-                </button>
-                <button type="submit" name="dessert" value="Tiramisu">Tiramisu
-                    <span class="price">€5.80</span>
-                </button>
-                <button type="submit" name="dessert" value="Creme Brulee">Creme Brulee
-                    <span class="price">€6.00</span>
-                </button>
-                <button type="submit" name="dessert" value="Vanilla Ice Cream">Vanilla Ice Cream
-                    <span class="price">€4.50</span>
-                </button>
+                <button type="submit" name="dessert" value="Chocolate Cake">Chocolate Cake (€5.50)</button>
+                <button type="submit" name="dessert" value="Tiramisu">Tiramisu (€5.80)</button>
+                <button type="submit" name="dessert" value="Creme Brulee">Creme Brulee (€6.00)</button>
+                <button type="submit" name="dessert" value="Vanilla Ice Cream">Vanilla Ice Cream (€4.50)</button>
             </div>
-            <input type="hidden" name="form_id" value="dessert-add-order-form">
         </form>
     </div>
 
-
+    <!-- CURRENT ORDER BOX -->
     <div class="order-box">
         <h2>Your Order</h2>
-        <ul id="order-list">
-            {% for pizza in pizzas %}
-                <li>
-                    Custom Pizza #{{ loop.index }}: {{ pizza.ingredients|join(', ') }} - €{{ pizza.price }}
-                    <form method="POST" action="{{ url_for('order.remove_item') }}" style="display:inline;">
-                        <input type="hidden" name="pizza_id" value="{{ pizza.id }}">
-                        <button type="submit">X</button>
-                    </form>
-                </li>
-            {% endfor %}
 
-            {% for drink in drinks %}
-                <li>
-                    {{ drink.name }} - €{{ drink.price * drink.amount }}
-                    <form method="POST" action="{{ url_for('order.remove_item') }}" style="display:inline;">
-                        <input type="hidden" name="drink_id" value="{{ drink.id }}">
-                        <button type="submit">X</button>
-                    </form>
-                </li>
-            {% endfor %}
+        {% if pizzas or drinks or desserts %}
+            <ul id="order-list">
+                {% for pizza in pizzas %}
+                    <li class="order-item">
+                        🍕 <strong>Pizza #{{ loop.index }}</strong>: {{ pizza.ingredients|join(', ') }}
+                        <span class="price">€{{ "%.2f"|format(pizza.price|float) }}</span>
+                        <form method="POST" action="{{ url_for('order.remove_item') }}" class="inline-form">
+                            <input type="hidden" name="pizza_id" value="{{ pizza.id }}">
+                            <button type="submit" class="delete-btn">✕</button>
+                        </form>
+                    </li>
+                {% endfor %}
 
-            {% for dessert in desserts %}
-                <li>
-                    {{ dessert.name }} - €{{ dessert.price * dessert.amount }}
-                    <form method="POST" action="{{ url_for('order.remove_item') }}" style="display:inline;">
-                        <input type="hidden" name="dessert_id" value="{{ dessert.id }}">
-                        <button type="submit">X</button>
-                    </form>
-                </li>
-            {% endfor %}
-        </ul>
-        <p id="order-total">Total: €{{ total_price }}</p>
+                {% for drink in drinks %}
+                    <li class="order-item">
+                        🥤 <strong>{{ drink.name }}</strong>
+                        {% if drink.amount > 1 %} ×{{ drink.amount }}{% endif %}
+                        <span class="price">€{{ "%.2f"|format(drink.price|float) }}</span>
+                        <form method="POST" action="{{ url_for('order.remove_item') }}" class="inline-form">
+                            <input type="hidden" name="drink_id" value="{{ drink.id }}">
+                            <button type="submit" class="delete-btn">✕</button>
+                        </form>
+                    </li>
+                {% endfor %}
 
-        <form class="order-box" method="POST" action="{{ url_for('order.confirm_order') }}" id="confirm-order-form">
-            <button type="submit">Confirm Order</button>
-        </form>
+                {% for dessert in desserts %}
+                    <li class="order-item">
+                        🍰 <strong>{{ dessert.name }}</strong>
+                        {% if dessert.amount > 1 %} ×{{ dessert.amount }}{% endif %}
+                        <span class="price">€{{ "%.2f"|format(dessert.price|float) }}</span>
+                        <form method="POST" action="{{ url_for('order.remove_item') }}" class="inline-form">
+                            <input type="hidden" name="dessert_id" value="{{ dessert.id }}">
+                            <button type="submit" class="delete-btn">✕</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <p id="order-total">Total: €{{ total_price }}</p>
+
+            {% if total_price|float > 0 %}
+                <form method="GET" action="{{ url_for('order.checkout') }}">
+                    <button type="submit" class="checkout-btn">Checkout</button>
+                </form>
+            {% else %}
+                <button class="checkout-btn disabled" disabled
+                        title="Can't go to checkout without ordering anything">
+                    Checkout
+                </button>
+            {% endif %}
+        {% else %}
+            <p class="empty-order">Your order is currently empty 🍕</p>
+            <button class="checkout-btn disabled" disabled
+                    title="Can't go to checkout without ordering anything">
+                Checkout
+            </button>
+        {% endif %}
     </div>
 </div>
 
 <script src="{{ url_for('static', filename='js/order_tab_switch.js') }}"></script>
-
 {% endblock %}
 </html>

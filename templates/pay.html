@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="checkout-container">
+    <h1>Payment</h1>
+
+    <div class="checkout-box">
+        <h2>Delivery Information</h2>
+        <p><strong>Name:</strong> {{ customer.FirstName }} {{ customer.LastName }}</p>
+        <p><strong>Street:</strong> {{ customer.Street }} {{ customer.HouseNumber }}</p>
+        <p><strong>City:</strong> {{ customer.City }}</p>
+        <p><strong>Postal Code:</strong> {{ customer.PostalCode }}</p>
+        <p><strong>Phone:</strong> {{ customer.PhoneNumber }}</p>
+    </div>
+
+    <div class="checkout-box">
+        <h2>Your Order</h2>
+        <ul>
+            {% for item in order %}
+                <li>{{ item }}</li>
+            {% endfor %}
+        </ul>
+        <p class="total"><strong>Total:</strong> €{{ total_price }}</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('order.pay') }}">
+        <button type="submit" class="place-order">Pay</button>
+    </form>
+
+    <a href="{{ url_for('order.checkout') }}" class="btn secondary">⬅ Go Back</a>
+</div>
+{% endblock %}

@@ -1,47 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Register</title>
-</head>
-<body>
-    <h2>Register</h2>
+{% extends "base.html" %}
+{% block content %}
+<div style="display: flex; justify-content: center; align-items: center; height: 90vh;">
+    <div style="
+        background: #fff8f0;
+        padding: 2rem 2.5rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        width: 400px;
+        text-align: center;">
+        <h2 style="color: #c0392b;">Register</h2>
 
-      {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <ul class="flashes local">
-          {% for category, message in messages %}
-            {% if category == "error" %}
-              <li class="{{ category }}">{{ message }}</li>
-            {% endif %}
-          {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <ul style="list-style: none; padding: 0;">
+              {% for category, message in messages %}
+                <li style="color: {% if category == 'error' %}#e74c3c{% else %}#27ae60{% endif %};">
+                    {{ message }}
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
 
-    <form method="POST" action="{{ url_for('auth.register') }}">
-        <label for="first_name">First Name</label>
-        <input type="text" id="first_name" name="first_name" required>
+        <form method="POST" action="{{ url_for('auth.register') }}" style="display: flex; flex-direction: column; gap: 0.8rem; text-align: left;">
+            <label>First Name</label>
+            <input type="text" name="first_name" required>
 
-        <label for="last_name">Last Name</label>
-        <input type="text" id="last_name" name="last_name" required>
+            <label>Last Name</label>
+            <input type="text" name="last_name" required>
 
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" required>
+            <label>Email</label>
+            <input type="email" name="email" required>
 
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" required>
+            <label>Password</label>
+            <input type="password" name="password" required>
 
-        <button type="submit">Register</button>
-    </form>
+            <label>Confirm Password</label>
+            <input type="password" name="confirm_password" required>
 
-    <p>Already have an account?
-        <a href="{{ url_for('auth.login') }}">Login here</a>
-    </p>
+            <label>Birthday</label>
+            <input type="date" name="birthdate" required>
 
-    <!-- Back button -->
-    <a href="{{ url_for('home.home') }}">
-        <button type="button">Back to Home</button>
-    </a>
-</body>
-</html>
+            <button type="submit" style="
+                background-color: #e67e22;
+                color: white;
+                border: none;
+                padding: 10px;
+                border-radius: 8px;
+                cursor: pointer;
+                margin-top: 10px;
+            ">˖᯽ ݁˖Register˖᯽ ݁˖</button>
+        </form>
+
+        <p style="margin-top: 1rem;">Already have an account?
+            <a href="{{ url_for('auth.login') }}" style="color: #e67e22;">Login here</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

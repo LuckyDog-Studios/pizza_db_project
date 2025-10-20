@@ -8,6 +8,7 @@ auth_bp = Blueprint("auth", __name__)
 
 
 # Register
+# Register
 @auth_bp.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -15,18 +16,25 @@ def register():
         last_name = request.form.get("last_name")
         email = request.form.get("email")
         password = request.form.get("password")
+        confirm_password = request.form.get("confirm_password")
+        birthdate = request.form.get("birthdate")
 
-        # check if email already exists
+        # Check if passwords match
+        if password != confirm_password:
+            flash("Passwords do not match. Please try again.", "error")
+            return render_template("register.html")
+
+        # Check if email exists
         existing_user = cs.find_by_email(email)
         if existing_user:
             flash("Email already registered. Please log in.", "error")
             return render_template("register.html")
 
-        # create customer
+        # Create customer
         hashed_pw = generate_password_hash(password)
-        cs.create_customer(first_name, last_name, email, hashed_pw)
+        cs.create_customer(first_name, last_name, email, hashed_pw, birthdate=birthdate)
 
-        flash("Registration successful! Please log in.", "success")
+        flash("🎉 Registration successful! Please log in.", "success")
         return redirect(url_for("auth.login"))
 
     return render_template("register.html")

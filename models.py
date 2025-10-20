@@ -64,6 +64,7 @@ class DiscountCode(db.Model):
     IsRedeemed = db.Column(db.Boolean, default=False)
     ExpiryDate = db.Column(db.Date)
     DiscountPercent = db.Column(db.Integer, default=0)  # e.g. 10 for 10%
+    CustomerId = db.Column(db.Integer, db.ForeignKey("customer.CustomerId"), nullable=True)
 
     orders = db.relationship("Order", back_populates="discount_code")
 

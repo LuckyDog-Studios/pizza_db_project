@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="checkout-container">
+    <h1>My Coupons</h1>
+    <p style="font-size: 1.1em; color: #555; margin-bottom: 20px;">
+        You earn a <strong>10% discount coupon</strong> every time you buy <strong>10 PIZZAS!</strong> ദ്ദി(˵ •̀ ᴗ - ˵ ) ✧<br>
+        Keep an eye on your valid coupons below.
+    </p>
+
+    {% if coupons %}
+        <div class="coupon-list">
+            {% for coupon in coupons %}
+                <div class="checkout-box">
+                    <h2>Code: {{ coupon.Code }}</h2>
+                    <p><strong>Discount:</strong> {{ coupon.DiscountPercent }}%</p>
+
+                    <!-- ✨ NEW: Show the description -->
+                    {% if coupon.Description %}
+                        <p><strong>Description:</strong> {{ coupon.Description }}</p>
+                    {% endif %}
+
+                    <p><strong>Expiry Date:</strong>
+                        {{ coupon.ExpiryDate.strftime('%Y-%m-%d') if coupon.ExpiryDate else 'No expiry' }}
+                    </p>
+                    <p><strong>Status:</strong>
+                        {% if coupon.IsRedeemed %}
+                            <span style="color: red;">Used</span>
+                        {% elif coupon.ExpiryDate and coupon.ExpiryDate < date.today() %}
+                            <span style="color: gray;">Expired</span>
+                        {% else %}
+                            <span style="color: green;">Valid</span>
+                        {% endif %}
+                    </p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>You don’t have any coupons yet.</p>
+    {% endif %}
+</div>
+{% endblock %}
