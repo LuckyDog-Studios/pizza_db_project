@@ -1,8 +1,65 @@
 from flask import Blueprint, render_template, redirect, url_for, request, session, flash
-
-from models import Ingredient, db, PizzaIngredient, Pizza, Order, Customer, DiscountCode
+from models import ( db, Ingredient, PizzaIngredient, Pizza, Order, Customer, OrderDrink, Drink, OrderDessert, Dessert, DeliveryPerson, PostalAssignment, DiscountCode)
 from datetime import date
-from models import Ingredient, db, PizzaIngredient, Pizza, Order, Customer, OrderDrink, Drink, OrderDessert, Dessert
+from datetime import datetime, timedelta, timezone
+
+#  Helper: Automatically refresh delivery availability
+def update_delivery_availability():
+    """Auto-refresh availability of couriers when cooldown expires."""
+    now = datetime.now(timezone.utc)
+    busy_drivers = DeliveryPerson.query.filter(
+        DeliveryPerson.IsAvailable == False,
+        DeliveryPerson.UnavailableUntil <= now
+    ).all()
+
+    for driver in busy_drivers:
+        driver.IsAvailable = True
+        driver.UnavailableUntil = None
+
+    if busy_drivers:
+        db.session.commit()
+
+
+def assign_delivery_person(postal_code):
+    """Assign a delivery person for a postal code.
+    If all couriers for that area are busy, create a new one.
+    Each courier becomes available again after 30 minutes."""
+    now = datetime.now(timezone.utc)
+
+    # Find existing postal assignments for this area
+    assignments = PostalAssignment.query.filter_by(PostalCode=postal_code).all()
+    driver_ids = [a.DeliveryPersonId for a in assignments]
+    drivers = DeliveryPerson.query.filter(
+        DeliveryPerson.DeliveryPersonId.in_(driver_ids)
+    ).all() if driver_ids else []
+
+    # Check for available drivers
+    available_driver = next((d for d in drivers if d.IsAvailable), None)
+
+    # If no available driver → create new one and assign
+    if not available_driver:
+        new_driver = DeliveryPerson(
+            Name=f"Driver {len(drivers) + 1} ({postal_code})",
+            IsAvailable=False,
+            UnavailableUntil=now + timedelta(minutes=30)
+        )
+        db.session.add(new_driver)
+        db.session.flush()  # get the ID before commit
+
+        assignment = PostalAssignment(
+            PostalCode=postal_code,
+            DeliveryPersonId=new_driver.DeliveryPersonId
+        )
+        db.session.add(assignment)
+        db.session.commit()
+        return new_driver
+    else:
+        # Mark chosen driver unavailable temporarily
+        available_driver.IsAvailable = False
+        available_driver.UnavailableUntil = now + timedelta(minutes=30)
+        db.session.commit()
+        return available_driver
+
 
 order_bp = Blueprint('order', __name__)
 home_bp = Blueprint('home', __name__)
@@ -22,7 +79,7 @@ def order():
     # Check for any existing unpaid confirmed order
     confirmed_order = Order.query.filter_by(CustomerId=customer.CustomerId, OrderStatus="Confirmed").first()
     if confirmed_order:
-        flash("⚠ You already have a confirmed unpaid order. Please go to 'My Orders' to pay or delete it.", "error")
+        flash("You already have a confirmed unpaid order. Please go to 'My Orders' to pay or delete it.", "error")
         return redirect(url_for("order.order_history"))
 
     # Get or create a new pending order
@@ -150,7 +207,7 @@ def add_to_order():
     # --- Block if there's a confirmed unpaid order ---
     unpaid_confirmed = Order.query.filter_by(CustomerId=customer_id, OrderStatus="Confirmed").first()
     if unpaid_confirmed:
-        flash("⚠ You already have a confirmed unpaid order. Please go to 'My Orders' to pay or delete it.", "error")
+        flash("You already have a confirmed unpaid order. Please go to 'My Orders' to pay or delete it.", "error")
         return redirect(url_for("order.order_history"))
 
     # --- Ensure a pending order exists ---
@@ -170,7 +227,7 @@ def add_to_order():
         ]
 
         if not selected_ingredient_names:
-            flash("⚠ Please select at least one ingredient.", "error")
+            flash("Please select at least one ingredient.", "error")
             return redirect(url_for("order.order"))
 
         # Create the pizza
@@ -192,7 +249,7 @@ def add_to_order():
     elif form_id == "drink-add-order-form":
         drink_name = request.form.get("drink")
         if not drink_name:
-            flash("⚠ No drink selected.", "error")
+            flash("No drink selected.", "error")
             return redirect(url_for("order.order"))
 
         drink = Drink.query.filter_by(Name=drink_name).first()
@@ -212,7 +269,7 @@ def add_to_order():
     elif form_id == "dessert-add-order-form":
         dessert_name = request.form.get("dessert")
         if not dessert_name:
-            flash("⚠ No dessert selected.", "error")
+            flash("No dessert selected.", "error")
             return redirect(url_for("order.order"))
 
         dessert = Dessert.query.filter_by(Name=dessert_name).first()
@@ -313,12 +370,12 @@ def checkout():
     # --- Get the current pending order ---
     order = Order.query.filter_by(CustomerId=customer_id, OrderStatus="Pending").first()
     if not order:
-        flash("⚠ Can't go to checkout without ordering anything.", "error")
+        flash("Can't go to checkout without ordering anything.", "error")
         return redirect(url_for("order.order"))
 
     # --- Prevent empty order checkout ---
     if not order.pizzas and not order.drinks and not order.desserts:
-        flash("⚠ Can't go to checkout without ordering anything.", "error")
+        flash("Can't go to checkout without ordering anything.", "error")
         return redirect(url_for("order.order"))
 
     coupon_code = ""
@@ -342,7 +399,7 @@ def checkout():
         if action == "confirm_order":
             # Validate all fields before continuing
             if not all([street, house_number, city, postal_code, phone]):
-                flash("⚠ Please fill in all delivery fields before continuing to payment.", "error")
+                flash("Please fill in all delivery fields before continuing to payment.", "error")
                 return redirect(url_for("order.checkout"))
 
             # Update customer info
@@ -490,15 +547,24 @@ def pay():
                 discount.IsRedeemed = True
                 db.session.add(discount)
 
-        # Update order status to Paid
+        # --- PAYMENT LOGIC ---
         order.OrderStatus = "Paid"
         db.session.add(order)
         db.session.commit()
 
-        flash("Payment successful! Thank you for your order ✧｡٩(ˊᗜˋ )و✧*", "success")
+        # --- DELIVERY ASSIGNMENT (NEW CLEAN VERSION) ---
+        delivery_person = assign_delivery_person(customer.PostalCode)
+        order.DeliveryPersonId = delivery_person.DeliveryPersonId
+        order.DeliveryDateTime = datetime.now(timezone.utc) + timedelta(minutes=30)
+
+        db.session.add(order)
+        db.session.commit()
+
+        flash(f"🚴 {delivery_person.Name} assigned! Estimated delivery in 30 minutes.", "success")
+        flash("💳 Payment successful! Thank you for your order ✧｡٩(ˊᗜˋ )و✧*", "success")
         return redirect(url_for("home.home"))
 
-    # Calculate total price (Pizzas + Drinks + Desserts)
+    # --- CALCULATE TOTAL PRICE (Pizzas + Drinks + Desserts) ---
     order_items = []
     total_price = 0
 
@@ -534,7 +600,7 @@ def pay():
         if discount:
             total_price *= (1 - discount.DiscountPercent / 100)
 
-    #  Render payment page
+    # --- RENDER PAYMENT PAGE ---
     return render_template(
         "pay.html",
         customer=customer,
@@ -542,6 +608,38 @@ def pay():
         total_price=f"{total_price:.2f}"
     )
 
+
+
+
+
+
+@order_bp.route('/order/track/<int:order_id>')
+def track_delivery(order_id):
+    customer_id = session.get("customer_id")
+    if not customer_id:
+        flash("Please log in to track your delivery.", "error")
+        return redirect(url_for("auth.login"))
+
+    order = Order.query.filter_by(OrderId=order_id, CustomerId=customer_id).first()
+    if not order:
+        flash("Order not found.", "error")
+        return redirect(url_for("order.order_history"))
+
+    if not order.delivery_person or not order.DeliveryDateTime:
+        flash("Delivery not started yet.", "info")
+        return redirect(url_for("order.order_history"))
+
+    # Compute remaining seconds
+    now = datetime.now(timezone.utc)
+    eta = order.DeliveryDateTime
+    remaining = max(0, int((eta - now).total_seconds()))
+
+    return render_template(
+        "track_delivery.html",
+        order=order,
+        delivery_person=order.delivery_person,
+        remaining=remaining
+    )
 
 
 
@@ -676,19 +774,36 @@ def coupons():
 
 
 
+@order_bp.route("/update_order_status/<int:order_id>", methods=["POST"])
+def update_order_status(order_id):
+    """AJAX endpoint to mark order as delivered when countdown reaches zero."""
+    order = Order.query.get(order_id)
+    if not order:
+        return {"error": "Order not found"}, 404
+
+    if order.OrderStatus == "Paid":
+        order.OrderStatus = "Delivered"
+        db.session.commit()
+
+    return {"message": "Order marked as delivered"}, 200
+
+
+
+
 
 
 
 @order_bp.route('/order/history')
 def order_history():
-    from datetime import timedelta
-    customer_id = session.get("customer_id")
+    from datetime import timedelta, datetime, timezone
+    update_delivery_availability()
 
+    customer_id = session.get("customer_id")
     if not customer_id:
         flash("Please log in to view your order history.", "error")
         return redirect(url_for("auth.login"))
 
-    # Fetch all customer orders (excluding Pending)
+    # Fetch all orders (excluding Pending)
     orders = (
         Order.query
         .filter_by(CustomerId=customer_id)
@@ -696,8 +811,9 @@ def order_history():
         .all()
     )
 
-    # Compute total price for each order
+    now = datetime.now(timezone.utc)
     for o in orders:
+        # --- Compute total price ---
         total_price = 0
         for pizza in o.pizzas:
             total_price += sum(float(pi.ingredient.Price) for pi in pizza.ingredients)
@@ -713,23 +829,39 @@ def order_history():
                 total_price *= (1 - discount.DiscountPercent / 100)
         o.total_price = total_price
 
+        # --- Countdown for Paid orders ---
+        o.remaining_seconds = None
+        if o.OrderStatus == "Paid" and o.DeliveryDateTime:
+            if o.DeliveryDateTime.tzinfo is None:
+                o.DeliveryDateTime = o.DeliveryDateTime.replace(tzinfo=timezone.utc)
+            remaining = int((o.DeliveryDateTime - now).total_seconds())
+            if remaining > 0:
+                o.remaining_seconds = remaining
+            else:
+                o.OrderStatus = "Delivered"
+                o.remaining_seconds = 0
+                db.session.commit()
 
-    orders.sort(
-        key=lambda o: (
-            0 if o.OrderStatus == "Confirmed" else 1,   # Confirmed first
-            o.PlaceDateTime.timestamp() if o.PlaceDateTime else 0  # newest first (descending below)
-        ),
-        reverse=True  # <--- FLIP ORDER
-    )
+    # ⚡ Sort oldest → newest (we’ll reverse in template)
+    orders.sort(key=lambda o: o.PlaceDateTime.timestamp() if o.PlaceDateTime else 0)
+
+    # --- JSON for countdown timers ---
+    orders_json = [
+        {
+            "OrderId": o.OrderId,
+            "Status": o.OrderStatus,
+            "remaining_seconds": o.remaining_seconds or 0
+        }
+        for o in orders
+    ]
 
     return render_template(
-        'order_history.html',
-        active_page='order_history',
+        "order_history.html",
+        active_page="order_history",
         orders=orders,
-        timedelta=timedelta
+        timedelta=timedelta,
+        orders_json=orders_json
     )
-
-
 
 
 

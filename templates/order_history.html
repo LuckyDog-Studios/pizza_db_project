@@ -14,12 +14,15 @@
                     background-color: #fff8f0;
                     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
                     border-left: 6px solid
-                        {% if order.OrderStatus == 'Confirmed' %}#ffa726{% else %}#66bb6a{% endif %};
+                        {% if order.OrderStatus == 'Confirmed' %}#ffa726
+                        {% elif order.OrderStatus == 'Paid' %}#42a5f5
+                        {% else %}#66bb6a{% endif %};
                     transition: transform 0.2s;
                 "
                 onmouseover="this.style.transform='scale(1.02)'"
                 onmouseout="this.style.transform='scale(1)'">
-                    <h2 style="color: #c0392b;">Order #{{ loop.revindex }}</h2>
+
+                    <h2 style="color: #c0392b;">Order #{{ loop.length - loop.index0 }}</h2>
                     <p><strong>Date:</strong>
                         {% if order.PlaceDateTime %}
                             {{ (order.PlaceDateTime + timedelta(hours=2)).strftime('%Y-%m-%d %H:%M') }}
@@ -29,23 +32,43 @@
                     </p>
 
                     <p><strong>Status:</strong>
-                        <span style="
-                            color: {% if order.OrderStatus == 'Confirmed' %}#e67e22{% else %}#2ecc71{% endif %};
+                        <span id="status-{{ order.OrderId }}" style="
+                            color:
+                                {% if order.OrderStatus == 'Confirmed' %}#e67e22
+                                {% elif order.OrderStatus == 'Paid' %}#42a5f5
+                                {% else %}#2ecc71{% endif %};
                             font-weight: bold;
                         ">
                             {{ order.OrderStatus }}
                         </span>
                     </p>
 
-                    <ul style="margin-left: 1.2rem;">
+                    {% if order.delivery_person %}
+                        <p>
+                            🚴 <strong>{{ order.delivery_person.Name }}</strong>
+                            {% if order.OrderStatus == "Paid" and order.remaining_seconds %}
+                                – ETA: <span id="countdown-{{ order.OrderId }}"></span>
+                            {% elif order.OrderStatus == "Delivered" %}
+                                – ✅ Delivered
+                            {% endif %}
+                        </p>
+                    {% endif %}
+
+                    {% if order.OrderStatus == "Paid" and order.remaining_seconds %}
+                        <div class="progress" style="background: #ddd; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 6px;">
+                            <div id="bar-{{ order.OrderId }}" style="background: #42a5f5; width: 100%; height: 100%; transition: width 1s linear;"></div>
+                        </div>
+                    {% elif order.OrderStatus == "Delivered" %}
+                        <p style="font-weight:bold; color:#27ae60;">✅ Delivered successfully!</p>
+                    {% endif %}
+
+                    <ul style="margin-left: 1.2rem; margin-top: 0.8rem;">
                         {% for pizza in order.pizzas %}
                             <li>🍕 Custom Pizza: {{ pizza.ingredients | map(attribute='ingredient.Name') | join(', ') }}</li>
                         {% endfor %}
-
                         {% for drink in order.drinks %}
                             <li>🥤 {{ drink.drink.Name }} ×{{ drink.Amount }}</li>
                         {% endfor %}
-
                         {% for dessert in order.desserts %}
                             <li>🍰 {{ dessert.dessert.Name }} ×{{ dessert.Amount }}</li>
                         {% endfor %}
@@ -73,4 +96,40 @@
         <p>You haven’t placed any orders yet.</p>
     {% endif %}
 </div>
+
+<!-- Countdown Timer Script -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const orders = {{ orders_json|tojson }};
+    orders.forEach(order => {
+        if (order.Status === "Paid" && order.remaining_seconds > 0) {
+            const countdownEl = document.getElementById(`countdown-${order.OrderId}`);
+            const statusEl = document.getElementById(`status-${order.OrderId}`);
+            const barEl = document.getElementById(`bar-${order.OrderId}`);
+            const total = order.remaining_seconds;
+            let timeLeft = total;
+
+            const timer = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    if (countdownEl) countdownEl.textContent = "Arrived! 🎉";
+                    if (statusEl) {
+                        statusEl.textContent = "Delivered ✅";
+                        statusEl.style.color = "#2ecc71";
+                    }
+                    if (barEl) barEl.style.width = "0%";
+                    fetch(`/update_order_status/${order.OrderId}`, { method: "POST" });
+                } else {
+                    const minutes = Math.floor(timeLeft / 60);
+                    const seconds = timeLeft % 60;
+                    if (countdownEl) countdownEl.textContent = `${minutes}m ${seconds}s 🚗`;
+                    const progress = (timeLeft / total) * 100;
+                    if (barEl) barEl.style.width = progress + "%";
+                    timeLeft--;
+                }
+            }, 1000);
+        }
+    });
+});
+</script>
 {% endblock %}
