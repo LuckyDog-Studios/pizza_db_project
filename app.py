@@ -4,7 +4,6 @@ from controller import order_bp, about_bp, home_bp, contact_bp, reports_bp
 from models import db, Ingredient, Drink, Dessert, Order, Pizza, OrderDrink, OrderDessert, PizzaIngredient
 from data import ingredients, drinks, desserts, customers
 from Customer.auth import auth_bp
-
 app = Flask(__name__)
 app.secret_key = "super-secret-key-123"
 

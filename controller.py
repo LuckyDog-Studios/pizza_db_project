@@ -1,4 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request, session, flash
+from sqlalchemy import func
+
 from models import ( db, Ingredient, PizzaIngredient, Pizza, Order, Customer, OrderDrink, Drink, OrderDessert, Dessert, DeliveryPerson, PostalAssignment, DiscountCode)
 from datetime import date
 from datetime import datetime, timedelta, timezone
@@ -884,7 +886,65 @@ def contact():
 def reroute_to_home_page():
     return redirect(url_for('home.home'))
 
-
 @reports_bp.route('/report')
 def reports():
-    return render_template('reports.html', active_page='reports')
+    # --- Top-selling pizzas ---
+    top_pizzas = (
+        db.session.query(
+            Ingredient.Name,
+            func.sum(Pizza.Amount).label("total_sold")
+        )
+        .join(PizzaIngredient, PizzaIngredient.IngredientId == Ingredient.IngredientId)
+        .join(Pizza, Pizza.PizzaId == PizzaIngredient.PizzaId)
+        .group_by(Ingredient.Name)
+        .order_by(func.sum(Pizza.Amount).desc())
+        .limit(10)
+        .all()
+    )
+
+    # --- Undelivered orders ---
+    undelivered_orders = (
+        Order.query.filter(Order.OrderStatus != "Delivered")
+        .order_by(Order.PlaceDateTime.desc())
+        .all()
+    )
+
+    # --- Monthly earnings by age and postal code ---
+    earnings_by_age_postal = {}
+    orders = Order.query.join(Customer).all()
+    for order in orders:
+        # Compute age in Python
+        birthdate = order.customer.BirthDate
+        if birthdate:
+            today = datetime.now().date()
+            age = today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
+        else:
+            age = None
+
+        postal = order.customer.PostalCode or "Unknown"
+
+        # Total price of order
+        total_price = 0
+        for pizza in order.pizzas:
+            pizza_total = sum(ing.ingredient.Price for ing in pizza.ingredients) * pizza.Amount
+            total_price += pizza_total
+        for drink in order.drinks:
+            total_price += drink.Amount * drink.drink.Price
+        for dessert in order.desserts:
+            total_price += dessert.Amount * dessert.dessert.Price
+
+        # Monthly key
+        month_key = order.PlaceDateTime.strftime("%Y-%m")
+
+        # Organize in dict: earnings_by_age_postal[month][postal][age] = total
+        earnings_by_age_postal.setdefault(month_key, {})
+        earnings_by_age_postal[month_key].setdefault(postal, {})
+        earnings_by_age_postal[month_key][postal].setdefault(age, 0)
+        earnings_by_age_postal[month_key][postal][age] += total_price
+
+    return render_template(
+        "reports.html",
+        top_pizzas=top_pizzas,
+        undelivered_orders=undelivered_orders,
+        earnings_by_age_postal=earnings_by_age_postal
+    )

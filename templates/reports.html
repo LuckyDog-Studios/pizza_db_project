@@ -1,8 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Staff Reports</h1>
+<h1>Staff Reports</h1>
+
+<h2>Top-Selling Pizza Ingredients</h2>
+<ul>
+{% for name, total in top_pizzas %}
+    <li>{{ name }}: {{ total }} sold</li>
+{% endfor %}
+</ul>
+
+<h2>Undelivered Orders</h2>
+<ul>
+{% for order in undelivered_orders %}
+    <li>Order {{ order.OrderId }} by {{ order.customer.FirstName }} {{ order.customer.LastName }} - Status: {{ order.OrderStatus }}</li>
+{% endfor %}
+</ul>
+
+<h2>Monthly Earnings by Age and Postal Code</h2>
+{% for month, postals in earnings_by_age_postal.items() %}
+    <h3>{{ month }}</h3>
+    {% for postal, ages in postals.items() %}
+        <h4>Postal: {{ postal }}</h4>
+        <ul>
+        {% for age, total in ages.items() %}
+            <li>Age {{ age }}: €{{ "%.2f"|format(total) }}</li>
+        {% endfor %}
+        </ul>
+    {% endfor %}
+{% endfor %}
+
 {% endblock %}
-</html>
