@@ -49,7 +49,7 @@
                             {% if order.OrderStatus == "Paid" and order.remaining_seconds %}
                                 – ETA: <span id="countdown-{{ order.OrderId }}"></span>
                             {% elif order.OrderStatus == "Delivered" %}
-                                – ✅ Delivered
+                                –  Delivered
                             {% endif %}
                         </p>
                     {% endif %}
