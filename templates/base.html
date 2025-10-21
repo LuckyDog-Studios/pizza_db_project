@@ -10,8 +10,8 @@
     <header>
         <div class="topnav">
             <a href="{{ url_for('home.home') }}" class="{% if active_page == 'home' %}active{% endif %}">Home</a>
-            <a href="{{ url_for('order.coupons') }}" class="{% if active_page == 'coupons' %}active{% endif %}">Coupons</a>
             <a href="{{ url_for('order.order') }}" class="{% if active_page == 'order' %}active{% endif %}">Order Now</a>
+            <a href="{{ url_for('order.coupons') }}" class="{% if active_page == 'coupons' %}active{% endif %}">Coupons</a>
             <a href="{{ url_for('contact.contact') }}" class="{% if active_page == 'contact' %}active{% endif %}">Contact</a>
             <a href="{{ url_for('about.about') }}" class="{% if active_page == 'about' %}active{% endif %}">About Us</a>
 
@@ -19,6 +19,9 @@
                 <!--  Show when logged in -->
                 <a href="{{ url_for('order.order_history') }}" class="{% if active_page == 'order_history' %}active{% endif %}">My Orders</a>
                 <a href="{{ url_for('auth.account') }}" class="{% if active_page == 'account' %}active{% endif %}">Account</a>
+                {% if customer and customer.Email == "BamsiesPizza@gmail.com" %}
+                    <a href="{{ url_for('reports.reports') }}" class="{% if active_page == 'reports' %}active{% endif %}">Report</a>
+                {% endif %}
                 <div class="logout-container">
                      <a href="{{ url_for('auth.logout') }}"><button>Logout</button></a>
                 </div>

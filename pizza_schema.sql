@@ -116,7 +116,7 @@ CREATE TABLE `discount_code` (
   CONSTRAINT `fk_discount_customer`
     FOREIGN KEY (`CustomerId`) REFERENCES `customer`(`CustomerId`)
     ON DELETE SET NULL
-    ON UPDATE CASCADE,
+    ON UPDATE CASCADE
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;

@@ -66,6 +66,8 @@ home_bp = Blueprint('home', __name__)
 contact_bp = Blueprint('contact', __name__)
 about_bp = Blueprint('about', __name__)
 
+reports_bp = Blueprint('reports', __name__)
+
 #Orders page logic
 @order_bp.route('/order', methods=['GET'])
 def order():
@@ -286,11 +288,6 @@ def add_to_order():
         flash(f"🍰 {dessert_name} added to your order!", "success")
 
     return redirect(url_for("order.order"))
-
-
-
-
-
 
 @order_bp.route('/order/remove_item', methods=['POST'])
 def remove_item():
@@ -886,3 +883,8 @@ def contact():
 @home_bp.route('/')
 def reroute_to_home_page():
     return redirect(url_for('home.home'))
+
+
+@reports_bp.route('/report')
+def reports():
+    return render_template('reports.html', active_page='reports')

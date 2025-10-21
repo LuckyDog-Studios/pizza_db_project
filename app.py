@@ -1,8 +1,8 @@
 from flask import Flask, session
 import app_secrets
-from controller import order_bp, about_bp, home_bp, contact_bp
+from controller import order_bp, about_bp, home_bp, contact_bp, reports_bp
 from models import db, Ingredient, Drink, Dessert, Order, Pizza, OrderDrink, OrderDessert, PizzaIngredient
-from data import ingredients, drinks, desserts
+from data import ingredients, drinks, desserts, customers
 from Customer.auth import auth_bp
 
 app = Flask(__name__)
@@ -21,30 +21,24 @@ app.register_blueprint(home_bp)
 app.register_blueprint(contact_bp)
 app.register_blueprint(auth_bp)
 
+app.register_blueprint(reports_bp)
 
-# with app.app_context():
-#     # Clear dependent tables first
-#     db.session.query(PizzaIngredient).delete()
-#     db.session.query(Pizza).delete()
-#     db.session.query(OrderDrink).delete()
-#     db.session.query(OrderDessert).delete()
-#     db.session.query(Order).delete()
-#
-#     # Then your base tables
-#     db.session.query(Ingredient).delete()
-#     db.session.query(Drink).delete()
-#     db.session.query(Dessert).delete()
-#
-#     # Re-seed base data
-#     db.session.add_all(ingredients + drinks + desserts)
-#     db.session.commit()
-#
-#     app.run()
+@app.context_processor
+def inject_customer():
+    from flask import session
+    from models import Customer
+
+    customer = None
+    customer_id = session.get("customer_id")
+    if customer_id:
+        customer = Customer.query.get(customer_id)
+    return dict(customer=customer)
+
 with app.app_context():
     # Only seed if there are no ingredients yet
     if not Ingredient.query.first():
         print("Seeding base data...")
-        db.session.add_all(ingredients + drinks + desserts)
+        db.session.add_all(ingredients + drinks + desserts + customers)
         db.session.commit()
     else:
         print("Database already contains data, skipping seeding.")
