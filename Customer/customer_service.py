@@ -7,12 +7,13 @@ def find_by_email(email):
 def find_by_id(customer_id):
     return Customer.query.get(customer_id)
 
-def create_customer(first_name, last_name, email, password_hash):
+def create_customer(first_name, last_name, email, password_hash, birthdate=None):
     new_customer = Customer(
         FirstName=first_name,
         LastName=last_name,
         Email=email,
         PasswordHash=password_hash,
+        BirthDate=birthdate,
         TotalPizzasOrdered=0
     )
     db.session.add(new_customer)
