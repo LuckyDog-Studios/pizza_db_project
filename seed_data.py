@@ -136,4 +136,4 @@ with app.app_context():
             ))
 
     db.session.commit()
-    print("✅ Sample data inserted successfully!")
+    print("Sample data inserted successfully!")

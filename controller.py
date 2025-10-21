@@ -491,7 +491,7 @@ def checkout():
             CustomerId=customer_id
         ).first()
         if discount:
-            total_price *= (1 - discount.DiscountPercent / 100)
+            total_price *= (1 - float(discount.DiscountPercent) / 100)
 
     # RENDER PAGE
     return render_template(
@@ -597,7 +597,7 @@ def pay():
             CustomerId=customer_id
         ).first()
         if discount:
-            total_price *= (1 - discount.DiscountPercent / 100)
+            total_price *= (1 - float(discount.DiscountPercent) / 100)
 
     # --- RENDER PAYMENT PAGE ---
     return render_template(
@@ -825,7 +825,7 @@ def order_history():
         if o.DiscountCodeId:
             discount = DiscountCode.query.get(o.DiscountCodeId)
             if discount:
-                total_price *= (1 - discount.DiscountPercent / 100)
+                total_price *= (1 - float(discount.DiscountPercent) / 100)
         o.total_price = total_price
 
         # --- Countdown for Paid orders ---
